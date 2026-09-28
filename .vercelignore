@@ -1,0 +1,11 @@
+.cache/
+.venv/
+data/
+docs/
+native/
+packages/
+services/
+.dockerignore
+Dockerfile
+Makefile
+compose.yaml

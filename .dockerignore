@@ -1,0 +1,16 @@
+.cache/
+.git/
+.pytest_cache/
+.venv/
+__pycache__/
+*.pyc
+*.so
+*.dylib
+*.dll
+*.o
+build/
+dist/
+data/generated/
+native/rf-core/bin/
+native/rf-core/build/
+native/rf-core/vendor/

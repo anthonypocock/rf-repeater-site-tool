@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/rf-repeater/schemas/analysis-job.schema.json",
+  "title": "AnalysisJob",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "job_id",
+    "created_at",
+    "mode",
+    "scenario",
+    "rf_profile",
+    "analysis",
+    "datasets",
+    "config_versions"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "analysis-job/v1"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["connected", "edge", "offline"]
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenario_id", "target_area"],
+      "properties": {
+        "scenario_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_area": {
+          "$ref": "#/$defs/geojson_geometry"
+        },
+        "objective": {
+          "type": "string",
+          "default": "balanced"
+        }
+      }
+    },
+    "rf_profile": {
+      "$ref": "rf-profile.schema.json"
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["search_radius_m", "preview_resolution_m", "standard_resolution_m", "include_uplink"],
+      "properties": {
+        "search_radius_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "preview_resolution_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "standard_resolution_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "include_uplink": {
+          "type": "boolean"
+        },
+        "candidate_limit": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "source", "version", "crs"],
+        "properties": {
+          "name": { "type": "string" },
+          "source": { "type": "string" },
+          "version": { "type": "string" },
+          "crs": { "type": "string" },
+          "sha256": { "type": "string" }
+        }
+      }
+    },
+    "config_versions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "geojson_geometry": {
+      "type": "object",
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["Point", "Polygon", "MultiPolygon"]
+        },
+        "coordinates": {}
+      }
+    }
+  }
+}
+

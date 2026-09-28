@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>RF Repeater Site MVP</title>
+    <link rel="icon" href="data:," />
+    <!-- Relative assets work at both / and /site-finder/ static mounts. -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="auth-loading">
+    <section id="auth-screen" class="auth-screen" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <div class="brand auth-brand">
+          <div class="brand-mark">RF</div>
+          <div>
+            <h1 id="auth-title">Repeater Site Tool</h1>
+            <p>Sign in with Deployment Manager</p>
+          </div>
+        </div>
+
+        <button id="auth-google" class="auth-provider" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.2 3-7.4Z" /><path d="M12 22c2.7 0 5-0.9 6.6-2.4l-3.2-2.5c-.9.6-2 .9-3.4.9-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22Z" /><path d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3.1a10 10 0 0 0 0 9Z" /><path d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A9.7 9.7 0 0 0 12 2a10 10 0 0 0-8.9 5.5l3.3 2.6C7.2 7.8 9.4 6 12 6Z" /></svg>
+          Sign in with Google
+        </button>
+
+        <form id="auth-email-form" class="auth-email-form">
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+          </label>
+          <label id="auth-password-row">
+            Password
+            <input name="password" type="password" autocomplete="current-password" placeholder="Password" />
+          </label>
+          <button id="auth-password-submit" class="auth-submit" type="submit">Sign in</button>
+          <button id="auth-magic-link" class="auth-link-button" type="button">Send sign-in link instead</button>
+        </form>
+
+        <p id="auth-message" class="auth-message">Access requires your configured authentication provider.</p>
+      </div>
+    </section>
+
+    <div class="app-shell">
+      <button id="control-panel-toggle" class="panel-edge-toggle panel-edge-toggle-left" type="button" aria-expanded="false" aria-controls="control-panel">
+        <span>Options</span>
+      </button>
+      <button id="results-panel-toggle" class="panel-edge-toggle panel-edge-toggle-right" type="button" aria-expanded="false" aria-controls="results-panel">
+        <span>Results</span>
+      </button>
+      <aside id="control-panel" class="control-panel">
+        <div class="brand">
+          <div class="brand-mark">RF</div>
+          <div>
+            <h1>Repeater Site Tool</h1>
+            <p>Western Australia pilot</p>
+          </div>
+        </div>
+
+        <form id="analysis-form" class="control-form">
+          <label>
+            Band
+            <select name="profile" id="profile">
+              <option value="VHF">VHF</option>
+              <option value="UHF">UHF</option>
+            </select>
+          </label>
+
+          <label>
+            Frequency MHz
+            <input name="frequency_mhz" id="frequency" type="number" min="20" max="20000" step="0.0125" value="150" />
+          </label>
+
+          <label>
+            Coordinate type
+            <select name="coordinate_format" id="coordinate-format">
+              <option value="latlon">Lat / lon</option>
+              <option value="mgrs">MGRS</option>
+            </select>
+          </label>
+
+          <div id="latlon-fields" class="control-grid">
+            <label>
+              Target lat
+              <input name="target_lat" type="number" min="-36" max="-13" step="0.0001" />
+            </label>
+            <label>
+              Target lon
+              <input name="target_lon" type="number" min="112" max="129.2" step="0.0001" />
+            </label>
+          </div>
+
+          <label id="mgrs-field" class="coordinate-mgrs" hidden>
+            Target MGRS
+            <input name="target_mgrs" type="text" autocomplete="off" spellcheck="false" placeholder="50J MK 12345 67890" />
+          </label>
+
+          <button id="load-map" class="load-map-button" type="button" title="Load map for the target coordinates">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.4 7-12a7 7 0 0 0-14 0c0 6.6 7 12 7 12Z" /><circle cx="12" cy="9" r="2.5" /></svg>
+            Load map
+          </button>
+
+          <label>
+            Search km
+            <input name="search_radius_km" type="number" min="3" max="45" step="0.5" value="3" />
+          </label>
+
+          <details class="options-section">
+            <summary>
+              <span>Options</span>
+              <svg class="options-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+            </summary>
+            <div class="options-fields">
+              <div class="control-grid">
+                <label>
+                  Repeater W
+                  <input name="repeater_power_w" type="number" min="1" max="100" step="1" value="25" />
+                </label>
+                <label>
+                  Mast m
+                  <input name="tx_height_m" type="number" min="0.5" max="3000" step="0.5" value="12" />
+                </label>
+              </div>
+
+              <label>
+                Antenna gain dBi
+                <input name="antenna_gain_dbi" type="number" min="-10" max="20" step="0.5" value="3" />
+              </label>
+
+              <label>
+                Deployment
+                <select name="deployment_profile">
+                  <option value="pushup_mast_lifepo4">Push-up mast + LiFePO4 packs</option>
+                  <option value="repeater_trailer_solar">Repeater trailer, solar + battery</option>
+                </select>
+              </label>
+
+              <label>
+                Talkback radio
+                <select name="user_radio">
+                  <option value="portable">Tait portable, 5 W</option>
+                  <option value="mobile">Tait mobile, 25 W</option>
+                </select>
+              </label>
+
+              <label>
+                Service standard
+                <select name="service_profile">
+                  <option value="operational_portable">Operational portable</option>
+                  <option value="vehicle_mobile">Vehicle mobile</option>
+                  <option value="engineering_sensitivity">Engineering sensitivity</option>
+                </select>
+              </label>
+
+              <label>
+                Noise environment
+                <select name="noise_environment">
+                  <option value="quiet_rural">Quiet rural (-113 dBm)</option>
+                  <option value="rural_country">Rural / country (-110 dBm)</option>
+                  <option value="suburban_incident" selected>Suburban / incident (-105 dBm)</option>
+                  <option value="urban_high_noise">Urban / high noise (-100 dBm)</option>
+                </select>
+              </label>
+
+              <label>
+                Site selection
+                <select name="site_preference">
+                  <option value="favour_edge">Edge / outside area</option>
+                  <option value="favour_inside_area">Inside area, fallback outside</option>
+                </select>
+              </label>
+
+              <label class="checkbox-row">
+                <input name="include_uplink" type="checkbox" checked />
+                Include uplink/talkback
+              </label>
+            </div>
+          </details>
+
+          <button class="run-button" type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+            Run analysis
+          </button>
+        </form>
+
+        <div class="status-block">
+          <div class="status-line">
+            <span>Mode</span>
+            <strong id="mode">local</strong>
+          </div>
+          <div class="status-line">
+            <span>Engine</span>
+            <strong id="engine-status">waiting</strong>
+          </div>
+          <div class="status-line">
+            <span>Region</span>
+            <strong id="region-label">WA real data</strong>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <div id="busy-overlay" class="busy-overlay" hidden aria-live="polite" aria-busy="true">
+          <div class="busy-indicator">
+            <span class="busy-spinner" aria-hidden="true"></span>
+            <strong id="busy-message">Analysis running</strong>
+          </div>
+        </div>
+        <div class="workspace-status" aria-live="polite" aria-atomic="false">
+          <p id="meta-summary">Real WA terrain and road/track analysis ready.</p>
+          <p id="assessment-summary" class="assessment-summary"></p>
+          <p id="coverage-summary" class="coverage-summary"></p>
+        </div>
+
+        <section class="map-section">
+          <button id="map-tools-toggle" class="map-tools-toggle" type="button" aria-expanded="true" aria-controls="map-controls">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10" /><path d="M18 7h2" /><circle cx="16" cy="7" r="2" /><path d="M4 17h2" /><path d="M10 17h10" /><circle cx="8" cy="17" r="2" /></svg>
+            <span>Map tools</span>
+          </button>
+          <div id="map-controls" class="map-controls" aria-label="Map controls">
+            <div id="draw-control" class="draw-control collapsed" aria-label="Required coverage area drawing controls">
+              <button id="draw-tools-toggle" class="draw-toggle" type="button" aria-expanded="false" aria-controls="draw-tools">
+                <span>Required Coverage Area</span>
+                <svg class="draw-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              </button>
+              <div id="draw-tools" class="draw-tools" hidden>
+                <button id="draw-area" class="tool-button" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6l6-3 8 5-2 9-9 3-5-7Z" /><path d="M5 6l3 14" /><path d="M19 8l-11 12" /></svg>
+                  Draw area
+                </button>
+                <button id="finish-area" class="tool-button" type="button" disabled>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+                  Finish
+                </button>
+                <button id="clear-area" class="tool-button" type="button" disabled>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                  Clear
+                </button>
+                <span id="draw-status" class="draw-status">No drawn area</span>
+              </div>
+            </div>
+            <section class="layer-control collapsed" aria-labelledby="layers-heading">
+              <button id="layers-toggle" class="layers-toggle" type="button" aria-expanded="false" aria-controls="layer-options">
+                <span id="layers-heading">Layers</span>
+                <svg class="layers-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              </button>
+              <div id="layer-options" class="layer-options" hidden>
+                <label><input type="checkbox" data-map-layer="aerial" checked /> Aerial image</label>
+                <label><input type="checkbox" data-map-layer="terrain" /> Terrain tint</label>
+                <label><input type="checkbox" data-map-layer="contours" /> Contours</label>
+                <label><input type="checkbox" data-map-layer="roads" checked /> Major roads</label>
+                <label><input type="checkbox" data-map-layer="minor-roads" checked /> Minor roads/tracks</label>
+                <label><input type="checkbox" data-map-layer="trails" checked /> Walk trails</label>
+                <label><input type="checkbox" data-map-layer="source-roads" /> Candidate source traces</label>
+                <label><input type="checkbox" data-map-layer="coverage" checked /> RF coverage</label>
+                <label class="layer-slider" for="coverage-opacity">
+                  <span>RF opacity <output id="coverage-opacity-value" for="coverage-opacity">48%</output></span>
+                  <input id="coverage-opacity" type="range" min="0" max="100" step="5" value="48" />
+                </label>
+                <label><input type="checkbox" data-map-layer="target" checked /> Target area</label>
+                <label><input type="checkbox" data-map-layer="candidates" checked /> Candidate sites</label>
+                <label class="disabled-layer" title="Vegetation type needs an approved vegetation/fuel layer for Western Australia.">
+                  <input type="checkbox" disabled /> Vegetation type
+                </label>
+              </div>
+            </section>
+            <div id="measure-control" class="measure-control collapsed" aria-label="Map measuring controls">
+              <button id="measure-tools-toggle" class="measure-toggle" type="button" aria-expanded="false" aria-controls="measure-tools">
+                <span>Measure</span>
+                <svg class="measure-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              </button>
+              <div id="measure-tools" class="measure-tools" hidden>
+                <div class="measure-mode" role="group" aria-label="Measurement mode">
+                  <button id="measure-line" class="tool-button" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 20 4" /><path d="M5 15h4v4" /><path d="M15 5h4v4" /></svg>
+                    Line
+                  </button>
+                  <button id="measure-track" class="tool-button" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c4-8 8 2 12-6 1-2 2-4 4-6" /><circle cx="4" cy="18" r="1.5" /><circle cx="12" cy="14" r="1.5" /><circle cx="20" cy="6" r="1.5" /></svg>
+                    Track
+                  </button>
+                </div>
+                <button id="finish-measure" class="tool-button" type="button" disabled>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+                  Finish
+                </button>
+                <button id="clear-measure" class="tool-button" type="button" disabled>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                  Clear
+                </button>
+                <span id="measure-status" class="measure-status">No measurement</span>
+              </div>
+            </div>
+            <div class="zoom-control" aria-label="Map zoom controls">
+              <button id="zoom-in" class="icon-button" type="button" title="Zoom in">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14" /><path d="M5 12h14" /></svg>
+              </button>
+              <button id="zoom-out" class="icon-button" type="button" title="Zoom out">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+              </button>
+              <button id="zoom-reset" class="icon-button" type="button" title="Reset zoom">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6" /><path d="M4 4v6" /><path d="m4 4 6 6" /><path d="M20 20h-6" /><path d="M20 20v-6" /><path d="m20 20-6-6" /></svg>
+              </button>
+            </div>
+            <div id="manual-site-status" class="manual-site-status" hidden>
+              <span></span>
+              <button id="rename-manual-site" class="icon-button" type="button" title="Rename manual repeater site">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+              </button>
+              <button id="clear-manual-site" class="icon-button" type="button" title="Clear manual repeater site">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              </button>
+            </div>
+          </div>
+          <div id="map-context-menu" class="map-context-menu" hidden role="menu">
+            <button id="context-set-target" type="button" role="menuitem">Set target coordinates here</button>
+            <button id="context-drop-repeater" type="button" role="menuitem">Drop manual repeater here</button>
+            <button id="context-clear-repeater" type="button" role="menuitem" hidden>Clear manual repeater</button>
+            <button id="context-rename-repeater" type="button" role="menuitem" hidden>Rename manual repeater</button>
+            <button id="context-edit-polygon" type="button" role="menuitem" hidden>Edit required coverage area</button>
+            <button id="context-delete-vertex" type="button" role="menuitem" hidden>Delete this polygon point</button>
+          </div>
+          <div class="map-attribution">Landgate / SLIP Locate imagery and Transport roads/trails</div>
+          <svg id="map" class="map" viewBox="0 0 1000 720" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Western Australia RF coverage map"></svg>
+        </section>
+      </main>
+
+      <aside id="results-panel" class="results-panel">
+        <section class="legend-panel" aria-label="Coverage margin legend">
+          <span><i class="legend-unusable"></i>Unusable</span>
+          <span><i class="legend-weak"></i>Weak</span>
+          <span><i class="legend-usable"></i>Usable</span>
+          <span><i class="legend-strong"></i>Strong</span>
+        </section>
+        <section id="recommendation-panel" class="recommendation-panel" aria-live="polite" hidden>
+          <div class="recommendation-heading">
+            <span>Assessment</span>
+            <strong id="recommendation-label"></strong>
+          </div>
+          <p id="recommendation-warning"></p>
+        </section>
+        <section id="save-panel" class="save-panel panel-section" aria-labelledby="save-heading" hidden>
+          <div class="panel-section-header">
+            <h2 id="save-heading">Save Result</h2>
+            <button id="close-save-panel" class="icon-button" type="button" title="Close save panel">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+            </button>
+          </div>
+          <form id="save-form" class="save-form">
+            <label>
+              Incident number
+              <input name="incident_number" type="text" autocomplete="off" placeholder="INC-2026-001" />
+            </label>
+            <label>
+              Analysis name
+              <input name="name" type="text" autocomplete="off" placeholder="Mundaring valley portable check" />
+            </label>
+            <label>
+              Location
+              <input name="location" type="text" autocomplete="off" placeholder="-31.9523, 116.1640" />
+            </label>
+            <label>
+              Description
+              <textarea name="description" rows="3" placeholder="Operational notes, assumptions, or field context"></textarea>
+            </label>
+            <button id="save-result" class="secondary-button" type="submit" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>
+              Save current result
+            </button>
+            <p id="save-status" class="save-status"></p>
+          </form>
+        </section>
+        <section class="saved-panel panel-section collapsed" aria-labelledby="folders-heading">
+          <div class="panel-section-header">
+            <button id="folders-toggle" class="section-toggle" type="button" aria-expanded="false" aria-controls="saved-list">
+              <svg class="section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              <span id="folders-heading">Folders</span>
+            </button>
+            <button id="refresh-saved" class="icon-button" type="button" title="Refresh saved analyses">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4" /><path d="M21 3v6h-6" /></svg>
+            </button>
+          </div>
+          <div id="saved-list" class="saved-list" hidden></div>
+        </section>
+        <section class="search-results-panel panel-section" aria-labelledby="search-results-heading">
+          <div class="panel-section-header">
+            <button id="search-results-toggle" class="section-toggle" type="button" aria-expanded="true" aria-controls="candidate-list">
+              <svg class="section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              <span id="search-results-heading">Search Results</span>
+            </button>
+            <div class="panel-actions">
+              <button id="open-save-panel" class="icon-button" type="button" title="Save current result" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" /><path d="M17 21v-8H7v8" /><path d="M7 3v5h8" /></svg>
+              </button>
+              <button id="export-json" class="icon-button" type="button" title="Download JSON">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12" /><path d="m16 11-4 4-4-4" /><path d="M5 21h14" /></svg>
+              </button>
+            </div>
+          </div>
+          <div id="candidate-list" class="candidate-list"></div>
+        </section>
+      </aside>
+      <div class="session-bar">
+        <span id="session-email"></span>
+        <button id="sign-out" class="text-button" type="button">Sign out</button>
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>

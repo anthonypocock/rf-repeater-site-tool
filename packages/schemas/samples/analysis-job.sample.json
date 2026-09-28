@@ -1,0 +1,77 @@
+{
+  "schema_version": "analysis-job/v1",
+  "job_id": "job_01JPHASE1SAMPLE",
+  "created_at": "2026-06-11T00:00:00Z",
+  "mode": "offline",
+  "scenario": {
+    "scenario_id": "scenario_01JPHASE1SAMPLE",
+    "objective": "balanced",
+    "target_area": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [148.9500, -35.3000],
+          [148.9700, -35.3000],
+          [148.9700, -35.2800],
+          [148.9500, -35.2800],
+          [148.9500, -35.3000]
+        ]
+      ]
+    }
+  },
+  "rf_profile": {
+    "profile_id": "rf_vhf_pilot_001",
+    "name": "Pilot VHF portable repeater",
+    "frequency_mhz": 150.0,
+    "polarisation": "vertical",
+    "tx": {
+      "power_dbm": 40.0,
+      "antenna_gain_dbi": 3.0,
+      "losses_db": 1.5,
+      "height_agl_m": 12.0
+    },
+    "rx": {
+      "power_dbm": 30.0,
+      "antenna_gain_dbi": 0.0,
+      "losses_db": 0.5,
+      "height_agl_m": 2.0
+    },
+    "itm": {
+      "climate": 5,
+      "surface_refractivity_n_units": 301.0,
+      "ground_permittivity": 15.0,
+      "ground_conductivity_s_per_m": 0.005,
+      "variability_mode": 0,
+      "time_percent": 50.0,
+      "location_percent": 50.0,
+      "situation_percent": 50.0
+    },
+    "service_threshold": {
+      "required_signal_dbm": -107.0,
+      "required_snr_db": 12.0,
+      "noise_floor_dbm": -119.0,
+      "fade_margin_db": 10.0
+    }
+  },
+  "analysis": {
+    "search_radius_m": 20000.0,
+    "preview_resolution_m": 250.0,
+    "standard_resolution_m": 100.0,
+    "include_uplink": true,
+    "candidate_limit": 5
+  },
+  "datasets": [
+    {
+      "name": "synthetic-dem",
+      "source": "repository fixture",
+      "version": "phase1",
+      "crs": "EPSG:4326",
+      "sha256": "not-calculated"
+    }
+  ],
+  "config_versions": {
+    "scoring": "phase1",
+    "legend": "phase1",
+    "confidence": "phase1"
+  }
+}

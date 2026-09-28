@@ -1,0 +1,42 @@
+name: rf-repeater-site-tool
+
+services:
+  rf-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rf-repeater-site-tool/backend:local
+    environment:
+      MVP_HOST: 0.0.0.0
+      MVP_PORT: 8080
+      MVP_AUTH_ENABLED: ${MVP_AUTH_ENABLED:-true}
+      MVP_SUPABASE_URL: ${MVP_SUPABASE_URL:-}
+      MVP_SUPABASE_PUBLISHABLE_KEY: ${MVP_SUPABASE_PUBLISHABLE_KEY:-}
+      MVP_GATEWAY_SECRET: ${MVP_GATEWAY_SECRET:-}
+      MVP_RESULTS_ROOT: ${MVP_RESULTS_ROOT:-/app/.cache/rf-results}
+      MVP_CORS_ORIGINS: ${MVP_CORS_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
+    ports:
+      - "${RF_BACKEND_BIND:-127.0.0.1}:${RF_BACKEND_PORT:-8081}:8080"
+    volumes:
+      - rf-data-cache:/app/.cache/rf-data
+      - rf-saved-results:/app/.cache/rf-results
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8080/api/health', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: ["tunnel"]
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      rf-backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  rf-data-cache:
+  rf-saved-results:

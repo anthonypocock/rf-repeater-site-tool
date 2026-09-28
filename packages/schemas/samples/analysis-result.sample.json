@@ -1,0 +1,32 @@
+{
+  "schema_version": "analysis-result/v1",
+  "job_id": "job_01JPHASE1SAMPLE",
+  "state": "complete",
+  "mode": "offline",
+  "engine": {
+    "name": "rf-core-ntia-itm",
+    "version": "phase1-spike",
+    "adapter_version": "none"
+  },
+  "assumptions": {
+    "source_job_schema": "analysis-job/v1",
+    "note": "Scaffold result, not an RF validation result."
+  },
+  "candidates": [
+    {
+      "candidate_id": "candidate_001",
+      "rank": 1,
+      "location": {
+        "type": "Point",
+        "coordinates": [148.9600, -35.2900]
+      },
+      "suitability_score": 72.5,
+      "confidence": "medium",
+      "explanation": [
+        "Scaffold candidate generated for contract testing."
+      ]
+    }
+  ],
+  "artifacts": []
+}
+

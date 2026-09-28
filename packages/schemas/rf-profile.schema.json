@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/rf-repeater/schemas/rf-profile.schema.json",
+  "title": "RfProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_id",
+    "name",
+    "frequency_mhz",
+    "polarisation",
+    "tx",
+    "rx",
+    "itm",
+    "service_threshold"
+  ],
+  "properties": {
+    "profile_id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "frequency_mhz": { "type": "number", "minimum": 20, "maximum": 20000 },
+    "polarisation": { "type": "string", "enum": ["horizontal", "vertical"] },
+    "tx": { "$ref": "#/$defs/radio_terminal" },
+    "rx": { "$ref": "#/$defs/radio_terminal" },
+    "itm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["climate", "surface_refractivity_n_units", "ground_permittivity", "ground_conductivity_s_per_m", "variability_mode", "time_percent", "location_percent", "situation_percent"],
+      "properties": {
+        "climate": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "surface_refractivity_n_units": { "type": "number", "minimum": 250, "maximum": 400 },
+        "ground_permittivity": { "type": "number", "exclusiveMinimum": 1 },
+        "ground_conductivity_s_per_m": { "type": "number", "exclusiveMinimum": 0 },
+        "variability_mode": { "type": "integer", "minimum": 0 },
+        "time_percent": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 100 },
+        "location_percent": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 100 },
+        "situation_percent": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 100 }
+      }
+    },
+    "service_threshold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_signal_dbm", "required_snr_db", "noise_floor_dbm", "fade_margin_db"],
+      "properties": {
+        "required_signal_dbm": { "type": "number" },
+        "required_snr_db": { "type": "number" },
+        "noise_floor_dbm": { "type": "number" },
+        "fade_margin_db": { "type": "number", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "radio_terminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["power_dbm", "antenna_gain_dbi", "losses_db", "height_agl_m"],
+      "properties": {
+        "power_dbm": { "type": "number" },
+        "antenna_gain_dbi": { "type": "number" },
+        "losses_db": { "type": "number", "minimum": 0 },
+        "height_agl_m": { "type": "number", "minimum": 0.5, "maximum": 3000 }
+      }
+    }
+  }
+}
+

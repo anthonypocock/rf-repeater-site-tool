@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/rf-repeater/schemas/analysis-result.schema.json",
+  "title": "AnalysisResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "job_id",
+    "state",
+    "mode",
+    "engine",
+    "assumptions",
+    "candidates",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "analysis-result/v1"
+    },
+    "job_id": { "type": "string", "minLength": 1 },
+    "state": { "type": "string", "enum": ["complete", "failed", "cancelled"] },
+    "mode": { "type": "string", "enum": ["connected", "edge", "offline"] },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "adapter_version": { "type": "string" }
+      }
+    },
+    "assumptions": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "rank", "location", "suitability_score", "confidence", "explanation"],
+        "properties": {
+          "candidate_id": { "type": "string" },
+          "rank": { "type": "integer", "minimum": 1 },
+          "location": { "$ref": "#/$defs/geojson_point" },
+          "suitability_score": { "type": "number", "minimum": 0, "maximum": 100 },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "explanation": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "uri"],
+        "properties": {
+          "kind": { "type": "string" },
+          "uri": { "type": "string" },
+          "sha256": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "geojson_point": {
+      "type": "object",
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": { "type": "string", "const": "Point" },
+        "coordinates": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": { "type": "number" }
+        }
+      }
+    }
+  }
+}
+
